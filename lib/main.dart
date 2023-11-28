@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:presensiapp/models/user_model.dart';
 import 'package:presensiapp/pages/home_page.dart';
 import 'package:presensiapp/pages/login_page.dart';
 import 'package:presensiapp/pages/main_page.dart';
@@ -24,11 +25,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
+      key: Log.key,
       providers: [
         ChangeNotifierProvider<AuthProvider>(
             create: (context) => AuthProvider()),
         ChangeNotifierProvider<LocationProvider>(
-            create: (context) => LocationProvider()),
+          create: (context) => LocationProvider(),
+        ),
         ChangeNotifierProvider<ScheduleProvider>(
             create: (context) => ScheduleProvider()),
         ChangeNotifierProvider<ScheduleTodayProvider>(
@@ -36,13 +39,15 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<PageProvider>(
             create: (context) => PageProvider()),
         ChangeNotifierProvider<AttendanceProvider>(
-            create: (context) => AttendanceProvider())
+            create: (context) => AttendanceProvider()),
+        ChangeNotifierProvider<AttendanceRange>(
+            create: (context) => AttendanceRange())
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        initialRoute: '/',
+        initialRoute: '/splash',
         routes: {
-          '/': (context) => const SplashPage(),
+          '/splash': (context) => const SplashPage(),
           '/login-page': (context) => const LoginPage(),
           '/home-page': (context) => const Home(),
           '/main-page': (context) => const MainPage()
@@ -51,6 +56,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
 
 // class AuthCheck extends StatefulWidget {
 //   const AuthCheck({super.key});

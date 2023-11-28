@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:presensiapp/main.dart';
 import 'package:presensiapp/models/user_model.dart';
 import 'package:presensiapp/pages/login_page.dart';
 import 'package:presensiapp/pages/main_page.dart';
@@ -32,6 +35,7 @@ class _SplashPageState extends State<SplashPage> {
         ),
         (route) => false,
       );
+      debugPrint(Log.key.toString());
       return;
     } else if (myId != null && context.mounted) {
       ID.idUser = myId;
@@ -44,9 +48,8 @@ class _SplashPageState extends State<SplashPage> {
                   builder: (context) => const MainPage(),
                 ),
                 (route) => false,
-              ));
-
-      return;
+              ))
+          .catchError(exit(0));
     }
   }
 

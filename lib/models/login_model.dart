@@ -26,6 +26,7 @@ class LoginModel {
 }
 
 class Data {
+  int id;
   String idUsers;
   String password;
   String name;
@@ -33,6 +34,7 @@ class Data {
   String jabatan;
 
   Data({
+    required this.id,
     required this.idUsers,
     required this.password,
     required this.name,
@@ -45,6 +47,7 @@ class Data {
   String toRawJson() => json.encode(toJson());
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
+        id: json["id"],
         idUsers: json["id_users"],
         password: json["password"],
         name: json["name"],
@@ -53,6 +56,7 @@ class Data {
       );
 
   Map<String, dynamic> toJson() => {
+        "id": id,
         "id_users": idUsers,
         "password": password,
         "name": name,

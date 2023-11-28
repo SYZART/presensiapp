@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:presensiapp/models/login_model.dart';
 import 'package:presensiapp/models/user_model.dart';
@@ -17,14 +16,13 @@ class AuthServices {
     });
     var response =
         await http.post(Uri.parse(url), headers: headers, body: body);
-    debugPrint(response.body.toString());
-    debugPrint(response.statusCode.toString());
     if (response.statusCode == 200) {
       return LoginModel.fromJson(jsonDecode(response.body));
     } else if (response.statusCode == 404) {
       return LoginModel(
           message: 'Id Karyawan Belum terdaftar',
           data: Data(
+              id: 0,
               password: password,
               name: '',
               gender: '',
@@ -34,6 +32,7 @@ class AuthServices {
       return LoginModel(
           message: 'Password salah',
           data: Data(
+              id: 0,
               password: password,
               name: '',
               gender: '',
@@ -48,7 +47,6 @@ class AuthServices {
     var urls = '$baseUrl/users/$idUser';
     var headers = {'Content-Type': 'application/json'};
     var response = await http.get(Uri.parse(urls), headers: headers);
-    debugPrint(response.body.toString());
     if (response.statusCode == 200) {
       return UsersModel.fromJson(jsonDecode(response.body));
     } else {

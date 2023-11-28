@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:presensiapp/models/schedule_model.dart';
 import 'package:presensiapp/providers/schedule_provider.dart';
+import 'package:presensiapp/size_config.dart';
 import 'package:presensiapp/style.dart';
 import 'package:presensiapp/widgets/schedule_list.dart';
 import 'package:provider/provider.dart';
@@ -13,12 +14,18 @@ class SchedulePage extends StatelessWidget {
     return Consumer<ScheduleProvider>(
       builder: (context, value, _) {
         if (value.state == ResultStateSchduleProvider.loading) {
-          return const Center(
-            child: CircularProgressIndicator(),
+          return SizedBox(
+            height: SizeConfig.screenHeight,
+            child: const Center(
+              child: CircularProgressIndicator(),
+            ),
           );
         } else if (value.state == ResultStateSchduleProvider.hasData) {
           return Padding(
-            padding: const EdgeInsets.all(defaultPadding),
+            padding: const EdgeInsets.only(
+                left: defaultPadding,
+                top: defaultPadding,
+                right: defaultPadding),
             child: ListView.builder(
                 itemCount: value.scheduleUserModel.data.length,
                 shrinkWrap: true,
@@ -42,7 +49,7 @@ class SchedulePage extends StatelessWidget {
             ),
           );
         }
-        return const Text('sd');
+        return const Text('');
       },
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:presensiapp/models/schedule_model.dart';
 import 'package:presensiapp/models/user_model.dart';
 import 'package:presensiapp/services/schedule_service.dart';
@@ -81,7 +82,7 @@ class ScheduleTodayProvider with ChangeNotifier {
       } else if (result.data.isEmpty) {
         _stateToday = ResultStateSchduleProvider.noData;
         notifyListeners();
-        return _messageToday = 'Belum ada jadwal';
+        return _messageToday = 'Belum Ada jadwal';
       }
     } catch (e) {
       _stateToday = ResultStateSchduleProvider.error;

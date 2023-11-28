@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:presensiapp/models/login_model.dart';
 import 'package:presensiapp/models/user_model.dart';
-import 'package:presensiapp/providers/attendance_provider.dart';
 import 'package:presensiapp/services/auth_service.dart';
 import 'package:presensiapp/user_info.dart';
 
@@ -64,15 +63,16 @@ class AuthProvider with ChangeNotifier {
       } else {
         if (_rememberMe) {
           await UsersInfo()
-              .setIdUser(res.data.idUsers)
-              .then((value) => ID.idUser = res.data.idUsers)
-              .then((value) => getMyProfile(res.data.idUsers));
+              .setIdUser(res.data.id.toString())
+              .then((value) => ID.idUser = res.data.id.toString())
+              .then((value) => getMyProfile(res.data.id.toString()));
           _state = ResultStateAuthProvider.success;
+          _rememberMe = !_rememberMe;
           notifyListeners();
           return;
         }
         _state = ResultStateAuthProvider.success;
-        ID.idUser = res.data.idUsers;
+        ID.idUser = res.data.id.toString();
         await getMyProfile(ID.idUser);
         notifyListeners();
 

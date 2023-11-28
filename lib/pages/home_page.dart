@@ -5,11 +5,11 @@ import 'package:presensiapp/models/user_model.dart';
 import 'package:presensiapp/providers/attendance_provider.dart';
 import 'package:presensiapp/providers/auth_provider.dart';
 import 'package:presensiapp/providers/location_provider.dart';
-import 'package:presensiapp/providers/schedule_provider.dart';
-import 'package:presensiapp/services/attendance_service.dart';
 import 'package:presensiapp/size_config.dart';
 import 'package:presensiapp/style.dart';
 import 'package:presensiapp/widgets/attendance_list.dart';
+import 'package:presensiapp/widgets/box_attendance.dart';
+import 'package:presensiapp/widgets/attendance_button.dart';
 import 'package:presensiapp/widgets/presensi_radio_button.dart';
 import 'package:provider/provider.dart';
 
@@ -18,21 +18,17 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
     debugPrint('build');
     final name = context.select(
         (AuthProvider authProvider) => authProvider.usersModel.data[0].name);
     SizeConfig().init(context);
     return SafeArea(
+      key: _scaffoldKey,
       child: Consumer<LocationProvider>(
         builder: (context, value, child) {
           if (value.stateLocation == ResultStateLocationProvider.loading) {
-            return Scaffold(
-              body: Image.asset(
-                'assets/images/presensi.png',
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            );
+            return const Center(child: CircularProgressIndicator());
           } else if (value.stateLocation ==
               ResultStateLocationProvider.hasData) {
             return Padding(
@@ -119,212 +115,13 @@ class Home extends StatelessWidget {
                         const SizedBox(
                           height: 16,
                         ),
-                        Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: secondaryColor,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 16, horizontal: 8),
-                            child: Consumer<AttendanceProvider>(
-                              builder: (context, value, child) => Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  Column(
-                                    children: [
-                                      Text(
-                                        'Jam Masuk',
-                                        style: thirdyTextStyle.copyWith(
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      Text(
-                                        value.attendanceToday.data[0].jamMasuk,
-                                        style: TextStyle(
-                                            fontWeight: superBold,
-                                            color: Colors.white),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    height: 37,
-                                    child: VerticalDivider(
-                                      thickness: 1,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  Column(
-                                    children: [
-                                      Text(
-                                        'Jam Keluar',
-                                        style: thirdyTextStyle.copyWith(
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      Text(
-                                        value.attendanceToday.data[0]
-                                                    .jamKeluar ==
-                                                '23.59'
-                                            ? '-'
-                                            : value.attendanceToday.data[0]
-                                                .jamKeluar,
-                                        style: TextStyle(
-                                            fontWeight: superBold,
-                                            color: Colors.white),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        Consumer<ScheduleTodayProvider>(
-                          builder: (context, value, child) {
-                            if (value.stateToday ==
-                                ResultStateSchduleProvider.loading) {
-                              return const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Center(
-                                  child: SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: secondaryColor,
-                                      )),
-                                ),
-                              );
-                            } else if (value.stateToday ==
-                                ResultStateSchduleProvider.hasData) {
-                              return InkWell(
-                                onTap: () {
-                                  Params paramss = Params();
-                                  paramss.idUser = ID.idUser;
-                                  paramss.dateTime =
-                                      DateTime.now().toString().split(' ')[0];
-                                  paramss.jamKeluar =
-                                      DateFormat.Hm().format(DateTime.now());
-                                  context
-                                              .read<AttendanceProvider>()
-                                              .attendanceToday
-                                              .data[0]
-                                              .jamMasuk ==
-                                          '-'
-                                      ? showModalBottomSheet(
-                                          context: context,
-                                          showDragHandle: true,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10.0),
-                                          ),
-                                          builder: (context) => const SizedBox(
-                                            height: 220,
-                                            child: PresensiRadioButton(),
-                                          ),
-                                        )
-                                      : context
-                                                  .read<AttendanceProvider>()
-                                                  .attendanceToday
-                                                  .data[0]
-                                                  .jamKeluar ==
-                                              '23.59'
-                                          ? context
-                                              .read<AttendanceProvider>()
-                                              .updateAttendance(paramss)
-                                              .then((value) => context
-                                                  .read<AttendanceProvider>()
-                                                  .getMyAttendanceToday(
-                                                      ID.idUser, ID.dateNow))
-                                          : ScaffoldMessenger.of(context)
-                                              .showSnackBar(const SnackBar(
-                                              backgroundColor: primaryColor,
-                                              duration: Duration(seconds: 2),
-                                              content: Text(
-                                                'Anda Sudah Absen Hari Ini',
-                                              ),
-                                            ));
-                                },
-                                child: Container(
-                                  margin: const EdgeInsets.only(top: 16),
-                                  width: double.infinity,
-                                  height: getProportionateScreenHeight(44),
-                                  decoration: BoxDecoration(
-                                      color: context
-                                                  .watch<AttendanceProvider>()
-                                                  .attendanceToday
-                                                  .data[0]
-                                                  .jamMasuk ==
-                                              '-'
-                                          ? secondaryColor
-                                          : context
-                                                      .watch<
-                                                          AttendanceProvider>()
-                                                      .attendanceToday
-                                                      .data[0]
-                                                      .jamKeluar ==
-                                                  '23.59'
-                                              ? secondaryColor
-                                              : greyColor,
-                                      borderRadius: BorderRadius.circular(12)),
-                                  child: Center(
-                                    child: Text(
-                                      context
-                                                  .watch<AttendanceProvider>()
-                                                  .attendanceToday
-                                                  .data[0]
-                                                  .jamMasuk ==
-                                              '-'
-                                          ? "Presensi Masuk"
-                                          : context
-                                                      .watch<
-                                                          AttendanceProvider>()
-                                                      .attendanceToday
-                                                      .data[0]
-                                                      .jamKeluar ==
-                                                  '23.59'
-                                              ? 'Presensi Keluar'
-                                              : 'Presensi',
-                                      style: secondaryTextStyle.copyWith(
-                                          color: Colors.white,
-                                          letterSpacing: 0.28,
-                                          fontWeight: superBold),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            } else if (value.stateToday ==
-                                ResultStateSchduleProvider.noData) {
-                              return const Padding(
-                                padding: EdgeInsets.only(top: 12),
-                                child: Center(
-                                  child: Text(
-                                    'Belum Ada Jadwal ',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              );
-                            }
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Center(
-                                child: IconButton(
-                                    onPressed: () => value.getMyScheduleToday(
-                                        ID.idUser, ID.dateNow),
-                                    icon: const Icon(
-                                      Icons.refresh,
-                                      color: secondaryColor,
-                                    )),
-                              ),
-                            );
-                          },
-                        )
+                        BoxAttendance(),
+                        AttendanceButton()
                       ],
                     ),
                   ),
+                  Text(ID.idUser),
+                  Text(ID.dateNow),
                   Text(
                     'Rekap Presensi',
                     style: primayTextStyle.copyWith(fontWeight: bold),

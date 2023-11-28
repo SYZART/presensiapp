@@ -108,31 +108,68 @@ class AttendanceProvider with ChangeNotifier {
   }
 
   AttendanceModel _attendanceToday = AttendanceModel(message: '', data: [
-    Datum(id: 1, idUser: '', date: DateTime.now(), alamat: '', status: '')
+    Datum(id: 0, idUser: '', date: DateTime.now(), alamat: '', status: '')
   ]);
   AttendanceModel get attendanceToday => _attendanceToday;
   ResultStateAttendanceProvider? _statAttendanceToday;
   ResultStateAttendanceProvider? get statAttendanceToday =>
       _statAttendanceToday;
+
   Future getMyAttendanceToday(String idUser, String date) async {
     try {
       _statAttendanceToday = ResultStateAttendanceProvider.loading;
       notifyListeners();
       AttendanceModel result =
           await AttendanceService().getMyAttendanceToday(idUser, date);
-      if (result.data.isNotEmpty) {
-        _statAttendanceToday = ResultStateAttendanceProvider.success;
-        notifyListeners();
-        return _attendanceToday = result;
-      } else if (result.data.isEmpty) {
+      debugPrint(result.data.isEmpty.toString());
+      if (result.data.isEmpty) {
         _statAttendanceToday = ResultStateAttendanceProvider.noData;
         notifyListeners();
         return;
+      } else if (result.data.isNotEmpty) {
+        _statAttendanceToday = ResultStateAttendanceProvider.success;
+        notifyListeners();
+        return _attendanceToday = result;
       }
     } catch (e) {
       _statAttendanceToday = ResultStateAttendanceProvider.error;
       notifyListeners();
       return _message = 'Error --> $e';
+    }
+  }
+}
+
+class AttendanceRange with ChangeNotifier {
+  AttendanceRange() {
+    getAttendanceRangeDate(ID.idUser, '2023-11');
+  }
+  AttendanceModel _attendanceRange = AttendanceModel(message: '', data: [
+    Datum(id: 0, idUser: '', date: DateTime.now(), alamat: '', status: '')
+  ]);
+  AttendanceModel get attendanceRange => _attendanceRange;
+  ResultStateAttendanceProvider? _statAttendanceRange;
+  ResultStateAttendanceProvider? get statAttendanceRange =>
+      _statAttendanceRange;
+  Future getAttendanceRangeDate(String idUser, String date) async {
+    try {
+      _statAttendanceRange = ResultStateAttendanceProvider.loading;
+      notifyListeners();
+      AttendanceModel res =
+          await AttendanceService().getAttendanceRangeDate(idUser, date);
+      if (res.data.isEmpty) {
+        _statAttendanceRange = ResultStateAttendanceProvider.noData;
+        notifyListeners();
+        return;
+      } else {
+        _statAttendanceRange = ResultStateAttendanceProvider.success;
+        notifyListeners();
+        _attendanceRange = res;
+        notifyListeners();
+      }
+    } catch (e) {
+      _statAttendanceRange = ResultStateAttendanceProvider.error;
+      notifyListeners();
+      return 'Error --> $e';
     }
   }
 }

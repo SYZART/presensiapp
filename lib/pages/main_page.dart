@@ -13,6 +13,7 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
     Widget body() {
       switch (context.watch<PageProvider>().index) {
         case 0:
@@ -52,6 +53,7 @@ class MainPage extends StatelessWidget {
     }
 
     return Scaffold(
+      key: _scaffoldKey,
       bottomNavigationBar: customBottomNav(),
       body: body(),
     );

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 UsersModel usersModelFromJson(String str) =>
@@ -29,6 +30,7 @@ class UsersModel {
 }
 
 class DataUser {
+  int id;
   String idUsers;
   String name;
   String password;
@@ -37,6 +39,7 @@ class DataUser {
   String jabatan;
 
   DataUser({
+    required this.id,
     required this.idUsers,
     required this.name,
     required this.password,
@@ -46,6 +49,7 @@ class DataUser {
   });
 
   factory DataUser.fromJson(Map<String, dynamic> json) => DataUser(
+        id: json["id"],
         idUsers: json["id_users"],
         name: json["name"],
         password: json["password"],
@@ -55,6 +59,7 @@ class DataUser {
       );
 
   Map<String, dynamic> toJson() => {
+        "id": id,
         "id_users": idUsers,
         "name": name,
         "password": password,
@@ -68,4 +73,8 @@ class ID {
   static String idUser = '';
   static String dateNow = DateTime.now().toString().split(' ')[0];
   static String jamMasuk = DateFormat.Hm().format(DateTime.now());
+}
+
+class Log {
+  static Key key = UniqueKey();
 }

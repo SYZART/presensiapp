@@ -43,6 +43,7 @@ dependencies:
   geocoding: ^2.1.1
   iconsax: ^0.0.8
   geolocator: ^10.1.0
+  restart_app: ^1.2.1
 
 dev_dependencies:
   flutter_test:

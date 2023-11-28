@@ -1,5 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:presensiapp/models/user_model.dart';
 import 'package:presensiapp/providers/auth_provider.dart';
+import 'package:presensiapp/providers/page_provider.dart';
 import 'package:presensiapp/style.dart';
 import 'package:provider/provider.dart';
 
@@ -50,6 +55,8 @@ class LoginPage extends StatelessWidget {
         height: 44,
         margin: const EdgeInsets.only(top: 8, bottom: 16),
         child: TextField(
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          keyboardType: TextInputType.number,
           onChanged: (value) => enteredIdKaryawan = value,
           decoration: InputDecoration(
               focusColor: primaryColor,
@@ -207,6 +214,7 @@ class LoginPage extends StatelessWidget {
                               backgroundColor:
                                   MaterialStateProperty.all(secondaryColor)),
                           onPressed: () async {
+                            context.read<PageProvider>().index = 0;
                             await value.login(
                                 enteredIdKaryawan, enteredPassword);
                             debugPrint(value.state.toString());

@@ -34,7 +34,6 @@ class AttendanceService {
       'date': params.dateTime,
       'jam_keluar': params.jamKeluar,
     });
-    debugPrint(body.toString());
     http.Response response =
         await http.patch(Uri.parse(url), body: body, headers: headers);
     if (response.statusCode == 200) {
@@ -60,8 +59,22 @@ class AttendanceService {
       String idUser, String date) async {
     var url = '$baseUrl/attendance/today/$idUser/$date';
     var headers = {'Content-Type': 'application/json'};
-
     http.Response response = await http.get(Uri.parse(url), headers: headers);
+    if (response.statusCode == 200) {
+      return attendanceModelFromJson(response.body);
+    } else {
+      throw Exception('Error Get Attendance');
+    }
+  }
+
+  Future<AttendanceModel> getAttendanceRangeDate(
+      String idUser, String date) async {
+    final queryParameters = {
+      'id_user': idUser,
+      'date': date,
+    };
+    final uri = Uri.https('be-copy.vercel.app', '/attendance', queryParameters);
+    final response = await http.get(uri);
     if (response.statusCode == 200) {
       return attendanceModelFromJson(response.body);
     } else {
@@ -70,11 +83,6 @@ class AttendanceService {
   }
 }
 
-//  {required String idUser,
-//       required DateTime dateTime,
-//       required String jamMasuk,
-//       required String alamat,
-//       required String status
 class Params {
   late String idUser;
   late String dateTime;
